@@ -2,7 +2,7 @@
  *  Title:       Damagable.cs
  *  Author:      Steve Ross-Byers (Matthew Schell)
  *  Created:     11/19/2015
- *  Modified:    04/03/2016
+ *  Modified:    04/09/2016
  *  Resources:   Adapted from original Wall script for 2D Roguelike Tutorial by Matthew Schell (Unity Technologies) using the Unity API
  *  Description: Originally used to allow the player to attack walls, this script is now attached to all enemies, walls, and any other object the player can damage
  */
@@ -52,7 +52,17 @@ public class Damagable : MonoBehaviour {
 			healthBar = transform.FindChild ("healthBar").gameObject;
 			
 			//set the color of the health bar
-			healthBar.GetComponent<SpriteRenderer>().color = new Color (0.0f, 1.0f, 0.0f);
+			healthBar.GetComponent<SpriteRenderer> ().color = new Color (0.0f, 1.0f, 0.0f);
+
+		//if the object is a container
+		} else if (tag == "Container") {
+			
+			//get the sprite renderer AND animator
+			spriteRenderer = GetComponent<SpriteRenderer> ();
+			animator = GetComponent<Animator> ();
+
+			//disable the animator for the time being
+			animator.enabled = false;
 
 		//otherwise, if the object is not an enemy
 		} else if (tag != "Enemy") {
@@ -140,7 +150,7 @@ public class Damagable : MonoBehaviour {
 		if (hp <= 0) {
 
 			//if the object is not an enemy
-			if (tag != "Enemy" && tag!= "Boss") {
+			if (tag != "Enemy" && tag != "Boss" && tag != "Container") {
 
 				//deactivate the object
 				gameObject.SetActive (false);
@@ -168,6 +178,9 @@ public class Damagable : MonoBehaviour {
 			}
 
 		} else {
+
+			//make sure the animator is enabled
+			animator.enabled = true;
 
 			//initiate the enemy death animation
 			animator.SetTrigger ("death");
