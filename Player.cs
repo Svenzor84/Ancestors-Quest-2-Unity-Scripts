@@ -2,7 +2,7 @@
  *  Title:       Player.cs
  *  Author:      Steve Ross-Byers (Matthew Schell)
  *  Created:     10/30/2015
- *  Modified:    04/08/2016
+ *  Modified:    04/09/2016
  *  Resources:   Adapted from original player script for 2D Roguelike Tutorial by Matthew Schell (Unity Technologies) using the Unity API
  *  Description: Attached to the player game object, this script handles the player's inventory, stat tracking, stat increases, current and max health, interactions with other items, and UI status updates
  */
@@ -612,7 +612,7 @@ public class Player : MovingObject {
 			//set the roomOver bool to true
 			roomOver = true;
 			
-			//invoke the restart function, after a delay equal to the value of restartRoomDelay
+			//invoke the restart function, after a delay equal to the returned value of the beginFade function
 			Invoke ("Restart", GameManager.instance.GetComponent<ScreenFade> ().BeginFade (1));
 			
 			//disable the player object since the room is over
@@ -1087,8 +1087,33 @@ public class Player : MovingObject {
 			//if the Object was disabled as a result of the interaction
 			if (hitObject.gameObject.GetComponent<Damagable> ().hp < 1) {
 
+				//randomly drop a health potion if the object is a container
+				if (hitObject.gameObject.tag == "Container") {
+
+					//potions from containers have a 50% drop rate (no find skill check)
+					if (Random.Range (0, 2) == 1) {
+
+						//variable that holds the item to be dropped, initially set to lowest tier health potion
+						GameObject toDrop = itemDrops[0];
+						
+						//if the player has gained a high enough max hp
+						if (maxHp > 149) {
+							
+							//upgrade the health potion
+							toDrop = itemDrops[6];
+							
+						} else if (maxHp > 99) {
+							
+							//upgrade the health potion
+							toDrop = itemDrops[5];
+						}
+
+						//instantiate the chosen item at the pre-defined destination
+						Instantiate (toDrop, position, Quaternion.identity);
+					}
+
 				//make sure we are only dropping items, playing death sound, and gaining xp when enemies die (as opposed to walls)
-				if (hitObject.gameObject.tag == "Enemy" || hitObject.gameObject.tag == "Boss") {
+				} else if (hitObject.gameObject.tag == "Enemy" || hitObject.gameObject.tag == "Boss") {
 
 					//gain experience equal to the object's exp value
 					GainExp (hitObject.expValue);
