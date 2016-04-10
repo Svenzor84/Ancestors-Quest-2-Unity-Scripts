@@ -2,7 +2,7 @@
  *  Title:       BoardManager.cs
  *  Author:      Steve Ross-Byers (Matthew Schell)
  *  Created:     10/21/2015
- *  Modified:    04/05/2016
+ *  Modified:    04/09/2016
  *  Resources:   Adapted from original boardmanager script for 2D Roguelike Tutorial by Matthew Schell (Unity Technologies) using the Unity API
  *  Description: Used to set up each random procedurally generated room and populate the room with items, walls, and enemies; also sets up the unique "secret room" when required
  */
@@ -125,6 +125,8 @@ public class BoardManager : MonoBehaviour {
 			//set the inner walls depending on the newly formed column count
 			wallCount.minimum = columns;
 			wallCount.maximum = (columns + 3);
+			healthCount.minimum = 0;
+			healthCount.maximum = (columns - 2);
 		}
 
 		//we need to set the camera up for larger room sizes, so grab a reference to the camera game object
@@ -193,6 +195,10 @@ public class BoardManager : MonoBehaviour {
 							Instantiate (secretWallTiles[floor - 1], new Vector3 (columns + 2.0f, 1.0f), Quaternion.identity);
 							Instantiate (secretWallTiles[floor - 1], new Vector3 (columns + 1.0f, 3.0f), Quaternion.identity);
 							Instantiate (secretWallTiles[floor - 1], new Vector3 (columns + 1.0f, 1.0f), Quaternion.identity);
+
+							//instantiate two container objects, one above and one below the kindly man's spot
+							Instantiate (healthTiles[Random.Range (6, healthTiles.Length)], new Vector3 (0.0f, 0.0f), Quaternion.identity);
+							Instantiate (healthTiles[Random.Range (6, healthTiles.Length)], new Vector3 (0.0f, 4.0f), Quaternion.identity);
 
 							//finally instantiate the kindly man at his proper spot in the room
 							Instantiate (secretWallTiles[9], new Vector3 (0.0f, 2.0f), Quaternion.identity);
