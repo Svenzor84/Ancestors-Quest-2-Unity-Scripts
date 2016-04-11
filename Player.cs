@@ -2,7 +2,7 @@
  *  Title:       Player.cs
  *  Author:      Steve Ross-Byers (Matthew Schell)
  *  Created:     10/30/2015
- *  Modified:    04/09/2016
+ *  Modified:    04/10/2016
  *  Resources:   Adapted from original player script for 2D Roguelike Tutorial by Matthew Schell (Unity Technologies) using the Unity API
  *  Description: Attached to the player game object, this script handles the player's inventory, stat tracking, stat increases, current and max health, interactions with other items, and UI status updates
  */
@@ -2604,5 +2604,22 @@ public class Player : MovingObject {
 	public void specialItem(int value) {
 
 		inventory [7] = value;
+	}
+
+	//function that gives access to the private members currentArmor or currentWeap depending on the argument passed
+	public int currentEquip(string category) {
+
+		if (category == "armor") {
+
+			return currentArmor;
+
+		} else if (category == "weapon") {
+
+			return currentWeap;
+
+		} else {
+
+			return 0;
+		}
 	}
 }
