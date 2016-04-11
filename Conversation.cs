@@ -2,7 +2,7 @@
  *  Title:       Conversation.cs
  *  Author:      Steve Ross-Byers
  *  Created:     04/06/2016
- *  Modified:    04/09/2016
+ *  Modified:    04/10/2016
  *  Resources:   Written using the Unity API
  *  Description: This script handles player interaction with the "kindly man" NPC, mostly concerning dialogue text
  */
@@ -17,8 +17,8 @@ public class Conversation : MonoBehaviour {
 	//a reference to the kindly text component element
 	private Text kindlyText;
 
-	//a reference to the scissors prefab gameobject
-	public GameObject Scissors;
+	//keep track of the current potion chest offer from the kindly man
+	private int offer;
 
 	//function that handles button presses within the kindly conversation
 	public void Converse (int choice) {
@@ -74,9 +74,10 @@ public class Conversation : MonoBehaviour {
 			//reset the ok button text
 			transform.FindChild("okButton").FindChild("Text").gameObject.GetComponent<Text>().text = "Ok...";
 
-			//deactivate the ok and accept shave buttons
+			//deactivate the ok, accept shave, and accept offer buttons
 			transform.FindChild("okButton").gameObject.SetActive (false);
 			transform.FindChild("acceptShave").gameObject.SetActive (false);
+			transform.FindChild ("acceptOffer").gameObject.SetActive (false);
 
 			//activate the shave and special buttons
 			transform.FindChild ("shaveButton").gameObject.SetActive (true);
@@ -105,6 +106,9 @@ public class Conversation : MonoBehaviour {
 				//change the text of the ok button
 				transform.FindChild("okButton").FindChild("Text").gameObject.GetComponent<Text>().text = "No Thanks.";
 
+				//enable the accept offer button
+				transform.FindChild ("acceptOffer").gameObject.SetActive (true);
+
 				//set the starter text for the kindly conversation
 				kindlyText.text = "You seem to have found some Special Equipment...\n";
 
@@ -117,10 +121,43 @@ public class Conversation : MonoBehaviour {
 					//add the rest of the conversation text
 					kindlyText.text += "You possess the Fire Orb:\nAn impressive relic indeed;\nwhen equipped it will allow you to cast Fireball, a powerful ranged spell that can burn your enemies (AND you) dealing damage based on your intelligence.\n(double click/tap to cast)\n";
 
+					//set the exchange offer
+					offer = 2;
+
 					break;
 
+				//if the player has the ice orb
+				case 2:
+					
+					//add the rest of the conversation text
+					kindlyText.text += "You possess the Ice Orb:\nA quite powerful item;\nwhen equipped it will allow you to cast Ice Shards, a ranged spell that summons frost spikes that can deal damage to your enemies (AND you) based on your intelligence.\n(double click/tap to cast)\n";
+					
+					//set the exchange offer
+					offer = 1;
+					
+					break;
 
-					//FINISH UNIQUE SPECIAL ITEM TEXT AND IMPLEMENT SPECIAL ITEM REMOVAL BUTTON
+				//if the player has the robes
+				case 3:
+					
+					//add the rest of the conversation text
+					kindlyText.text += "You possess the Robes:\nA wonderous relic;\nwhen equipped they will allow you to Teleport at a whim, blinking across the battlefield before your enemies can react.\n(double click/tap to cast)\n";
+					
+					//set the exchange offer
+					offer = 2;
+					
+					break;
+
+				//if the player has the cloak
+				case 4:
+					
+					//add the rest of the conversation text
+					kindlyText.text += "You possess the Cloak:\nIt seems a simple garment;\nhowever, when equipped it will allow you to move with magical speed, granting you an extra action each turn before your enemies can act.\n";
+					
+					//set the exchange offer
+					offer = 1;
+					
+					break;
 
 				//default case does nothing
 				default:
@@ -128,8 +165,16 @@ public class Conversation : MonoBehaviour {
 
 				}
 
-				//add text that offers the player potions in exchange for the current special equipment item
-				kindlyText.text += "If you care to be rid of this Special Item, I can offer you 5 health potions.";
+				if (offer == 1) {
+
+					//add text that offers the player potions in exchange for the current special equipment item
+					kindlyText.text += "If you care to be rid of this Special Item, I can offer you " + offer + " Potion Chest";
+
+				} else {
+
+					//add text that offers the player potions in exchange for the current special equipment item
+					kindlyText.text += "If you care to be rid of this Special Item, I can offer you " + offer + " Potion Chests";
+				}
 			}
 			break;
 
@@ -147,6 +192,22 @@ public class Conversation : MonoBehaviour {
 			StartCoroutine (beardRemoval());
 
 			break;
+
+		//case 4 is for accepting the kindly man's special equipment trade offer
+		case 4:
+
+			//disable the ok and accept offer buttons
+			transform.FindChild ("okButton").gameObject.SetActive (false);
+			transform.FindChild ("acceptOffer").gameObject.SetActive (false);
+
+			//set the kindly conversation text to thank the player
+			kindlyText.text = "Thank you very much, Descendant.\nThis item will do much to further my research.";
+
+			//initiate item swap coroutine
+			StartCoroutine (itemSwap());
+
+			break;
+
 		default:
 			break;
 
@@ -195,6 +256,64 @@ public class Conversation : MonoBehaviour {
 		//activate the ok button
 		transform.FindChild ("okButton").gameObject.SetActive (true);
 
+		//return the screen from black
+		GameManager.instance.GetComponent<ScreenFade> ().BeginFade (-1);
+	}
+
+	//coroutine that handles animation and scren fade timing as well as taking away the player's current special equipment and spawning the proper number of potion chests
+	IEnumerator itemSwap() {
+
+		//grab a temporary reference to the player script on the player gameobject
+		Player tempPlayer = GameObject.Find ("Player").GetComponent<Player> ();
+
+		//if the player has the special item currently equipped, unequip it prior to swap
+		if (tempPlayer.currentEquip ("armor") == 9) {
+
+			tempPlayer.equipArmor (9);
+
+		} else if (tempPlayer.currentEquip ("armor") == 10) {
+
+			tempPlayer.equipArmor (10);
+
+		} else if (tempPlayer.currentEquip ("weapon") == 9) {
+
+			tempPlayer.equipWeap (9);
+
+		} else if (tempPlayer.currentEquip ("weapon") == 10) {
+
+			tempPlayer.equipWeap (10);
+
+		}
+
+		//initiate the kindly man's item swap animation and change the sprite renderer for the Item gameObject
+		GameObject.FindWithTag ("Kindly").GetComponent<Animator> ().SetTrigger ("Swap");
+
+		//CHANGE SPRITE RENDERER FOR THE ITEM GAMEOBJECT ON KINDLY MAN
+
+		//wait for the animation to finish
+		yield return new WaitForSeconds(1.5f);
+
+		//fade the screen out and wait for the fade to end
+		yield return new WaitForSeconds(GameManager.instance.GetComponent<ScreenFade>().BeginFade (1) + 0.5f);
+
+		//remove the player's special equipment
+		tempPlayer.specialItem (0);
+
+		//set the kindly text
+		kindlyText.text = "You are now free of your burden and also free to pick up a new Special Equipment item should you chance upon one in your travels.  Do not forget to pick up your payment on your way out.";
+
+		//spawn the proper number of potion chests as per the kindly man's offer
+		for (int i = 0; i < offer; i++) {
+
+			Instantiate (tempPlayer.itemDrops[4], new Vector3 (3.0f + i, 2.0f), Quaternion.identity);
+		}
+
+		//reset the ok button text
+		transform.FindChild ("okButton").FindChild ("Text").GetComponent<Text> ().text = "Ok...";
+		
+		//activate the ok button
+		transform.FindChild ("okButton").gameObject.SetActive (true);
+		
 		//return the screen from black
 		GameManager.instance.GetComponent<ScreenFade> ().BeginFade (-1);
 	}
