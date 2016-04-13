@@ -20,6 +20,9 @@ public class Conversation : MonoBehaviour {
 	//keep track of the current potion chest offer from the kindly man
 	private int offer;
 
+	//an array of sprites to set the kindly man's item with
+	public Sprite[] items;
+
 	//function that handles button presses within the kindly conversation
 	public void Converse (int choice) {
 
@@ -285,13 +288,20 @@ public class Conversation : MonoBehaviour {
 
 		}
 
-		//initiate the kindly man's item swap animation and change the sprite renderer for the Item gameObject
-		GameObject.FindWithTag ("Kindly").GetComponent<Animator> ().SetTrigger ("Swap");
+		//grab a temporary reference to the kindly man
+		GameObject tempKindly = GameObject.FindWithTag ("Kindly");
 
-		//CHANGE SPRITE RENDERER FOR THE ITEM GAMEOBJECT ON KINDLY MAN
+		//initiate the kindly man's item swap animation and change the sprite renderer for the Item gameObject
+		tempKindly.GetComponent<Animator> ().SetTrigger ("Swap");
+
+		//set the kindly man's item to the player's special equipment item
+		tempKindly.gameObject.transform.FindChild ("Item").GetComponent<SpriteRenderer>().sprite = items[tempPlayer.specialItem ()];
 
 		//wait for the animation to finish
 		yield return new WaitForSeconds(1.5f);
+
+		//unset the kindly man's item
+		tempKindly.transform.FindChild ("Item").GetComponent<SpriteRenderer> ().sprite = null;
 
 		//fade the screen out and wait for the fade to end
 		yield return new WaitForSeconds(GameManager.instance.GetComponent<ScreenFade>().BeginFade (1) + 0.5f);
