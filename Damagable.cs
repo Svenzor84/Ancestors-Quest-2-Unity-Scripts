@@ -152,8 +152,39 @@ public class Damagable : MonoBehaviour {
 			//if the object is not an enemy
 			if (tag != "Enemy" && tag != "Boss" && tag != "Container") {
 
-				//deactivate the object
-				gameObject.SetActive (false);
+				//check to see if this is the last wall in the room
+				if (GameManager.instance.GetComponent<BoardManager>().getCurrentWalls() != 1) {
+
+					//decrement the current wall count
+					GameManager.instance.GetComponent<BoardManager>().decrementCurrentWalls ();
+
+					//deactivate the object
+					gameObject.SetActive (false);
+
+				} else {
+
+					//if the player is in room 5
+					if (GameManager.instance.GetRoom() == 5) {
+
+						//spawn a crate object below the wall object
+						GameObject tempBarrel = Instantiate (GameManager.instance.GetComponent<BoardManager>().healthTiles[7], transform.position, Quaternion.identity) as GameObject;
+
+						//kill the temp barrel
+						tempBarrel.GetComponent<Damagable>().killObject();
+
+						//deactivate the wall
+						gameObject.SetActive (false);
+
+						//spawn a secret exit in the same position
+						GameManager.instance.GetComponent<BoardManager>().openFloorExit (transform.position, true);
+
+					//otherwise
+					} else {
+
+						//deactivate the object
+						gameObject.SetActive (false);
+					}
+				}
 
 			//otherwise, the object is an enemy
 			} else {
@@ -212,5 +243,12 @@ public class Damagable : MonoBehaviour {
 			//have the object take damage
 			takeDamage (GameObject.Find ("Player").GetComponent<Player>().getInt () * 5);
 		}
+	}
+
+	//public function that allows other scripts to start the co-routine enemy death
+	public void killObject() {
+
+		//start the enemy death coroutine
+		StartCoroutine (EnemyDeath ());
 	}
 }
