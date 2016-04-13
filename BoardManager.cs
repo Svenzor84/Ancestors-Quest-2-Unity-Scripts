@@ -34,9 +34,13 @@ public class BoardManager : MonoBehaviour {
 	public Count wallCount = new Count (5,9);
 	public Count healthCount = new Count (0,3);
 
-	//tiles to exit the room or floor (depending on current level)
+	//keep track of the current number of walls in the room
+	private int currentWalls;
+
+	//tiles to exit the room, floor, or secret (depending on current level)
 	public GameObject roomExit;
 	public GameObject floorExit;
+	public GameObject secretExit;
 
 	//game objects for the locked exit and the key to open it
 	public GameObject lockedFloorExit;
@@ -343,7 +347,7 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	//function that lays out a random object from an array of game objects at a random position chosen by the RandomPosition function
-	void LayoutObjectAtRandom(GameObject[] tileArray, int minimum, int maximum) {
+	private int LayoutObjectAtRandom(GameObject[] tileArray, int minimum, int maximum) {
 
 		//randomly set the number of objects in the room within a range of the minimum and maximum parameters
 		int objectCount = Random.Range (minimum, maximum);
@@ -361,6 +365,9 @@ public class BoardManager : MonoBehaviour {
 			//NOTE: Quaternion.identity simply keeps the tile from being rotated
 			Instantiate (tileChoice, randomPosition, Quaternion.identity);
 		}
+
+		//return the object count
+		return objectCount;
 	}
 
 	//the single public function of this class, called by the game manager, to set up the current room
@@ -377,7 +384,7 @@ public class BoardManager : MonoBehaviour {
 		if (floor == 1) {
 
 			//lay out the inner wall tiles from the F1 array at random
-			LayoutObjectAtRandom (wallTilesF1, wallCount.minimum, wallCount.maximum);
+			currentWalls = LayoutObjectAtRandom (wallTilesF1, wallCount.minimum, wallCount.maximum);
 		
 		//if the player is on floor 2
 		}else if (floor == 2) {
@@ -386,20 +393,20 @@ public class BoardManager : MonoBehaviour {
 			if (room < 6) {
 
 				//lay out the previous floor's walls
-				LayoutObjectAtRandom (wallTilesF1, wallCount.minimum, wallCount.maximum);
+				currentWalls = LayoutObjectAtRandom (wallTilesF1, wallCount.minimum, wallCount.maximum);
 
 			//otherwise, we are on room 6 or greater
 			} else {
 
 				//lay out the next floor's walls
-				LayoutObjectAtRandom (wallTilesF2, wallCount.minimum, wallCount.maximum);
+				currentWalls = LayoutObjectAtRandom (wallTilesF2, wallCount.minimum, wallCount.maximum);
 			}
 
 		//if the player is on floor 3
 		} else if (floor == 3) {
 
 			//lay out the inner wall tiles from the F2 array at random
-			LayoutObjectAtRandom (wallTilesF2, wallCount.minimum, wallCount.maximum);
+			currentWalls = LayoutObjectAtRandom (wallTilesF2, wallCount.minimum, wallCount.maximum);
 
 		//if the player is on floor 4
 		}else if (floor == 4) {
@@ -408,20 +415,20 @@ public class BoardManager : MonoBehaviour {
 			if (room < 6) {
 				
 				//lay out the previous floor's walls
-				LayoutObjectAtRandom (wallTilesF2, wallCount.minimum, wallCount.maximum);
+				currentWalls = LayoutObjectAtRandom (wallTilesF2, wallCount.minimum, wallCount.maximum);
 				
 			//otherwise, we are on room 6 or greater
 			} else {
 				
 				//lay out the next floor's walls
-				LayoutObjectAtRandom (wallTilesF3, wallCount.minimum, wallCount.maximum);
+				currentWalls = LayoutObjectAtRandom (wallTilesF3, wallCount.minimum, wallCount.maximum);
 			}
 
 		//if the player is on floor 5
 		} else if (floor == 5) {
 
 			//lay out the inner wall tiles from the F3 array at random
-			LayoutObjectAtRandom (wallTilesF3, wallCount.minimum, wallCount.maximum);
+			currentWalls = LayoutObjectAtRandom (wallTilesF3, wallCount.minimum, wallCount.maximum);
 
 		//if the player is on floor 6
 		}else if (floor == 6) {
@@ -430,20 +437,20 @@ public class BoardManager : MonoBehaviour {
 			if (room < 6) {
 				
 				//lay out the previous floor's walls
-				LayoutObjectAtRandom (wallTilesF3, wallCount.minimum, wallCount.maximum);
+				currentWalls = LayoutObjectAtRandom (wallTilesF3, wallCount.minimum, wallCount.maximum);
 				
 			//otherwise, we are on room 6 or greater
 			} else {
 				
 				//lay out the next floor's walls
-				LayoutObjectAtRandom (wallTilesF4, wallCount.minimum, wallCount.maximum);
+				currentWalls = LayoutObjectAtRandom (wallTilesF4, wallCount.minimum, wallCount.maximum);
 			}
 
 		//if the player is on floor 7
 		} else if (floor == 7) {
 
 			//lay out the inner wall tiles from the F4 array at random
-			LayoutObjectAtRandom (wallTilesF4, wallCount.minimum, wallCount.maximum);
+			currentWalls = LayoutObjectAtRandom (wallTilesF4, wallCount.minimum, wallCount.maximum);
 
 			//if the player is on floor 8
 		}else if (floor == 8) {
@@ -452,26 +459,26 @@ public class BoardManager : MonoBehaviour {
 			if (room < 6) {
 				
 				//lay out the previous floor's walls
-				LayoutObjectAtRandom (wallTilesF4, wallCount.minimum, wallCount.maximum);
+				currentWalls = LayoutObjectAtRandom (wallTilesF4, wallCount.minimum, wallCount.maximum);
 				
 				//otherwise, we are on room 6 or greater
 			} else {
 				
 				//lay out the next floor's walls
-				LayoutObjectAtRandom (wallTilesF5, wallCount.minimum, wallCount.maximum);
+				currentWalls = LayoutObjectAtRandom (wallTilesF5, wallCount.minimum, wallCount.maximum);
 			}
 
 		//if the player is on floor 9
 		} else if (floor == 9) {
 		
 			//lay out the inner wall tiles from the F5 array at Random
-			LayoutObjectAtRandom (wallTilesF5, wallCount.minimum, wallCount.maximum);
+			currentWalls = LayoutObjectAtRandom (wallTilesF5, wallCount.minimum, wallCount.maximum);
 
 		//if the floor level outpaces the number of wall tile arrays, use a super array containing all of the wall tile arrays
 		} else {
 
 			//lay out the inner wall tiles form the wall tile super array at random
-			LayoutObjectAtRandom (allWallTiles, wallCount.minimum, wallCount.maximum);
+			currentWalls = LayoutObjectAtRandom (allWallTiles, wallCount.minimum, wallCount.maximum);
 		}
 
 		//lay out the random objects at random
@@ -804,11 +811,19 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 
-	//function that instantiates the floor exit tile (called by the player when the key is found)
-	public void openFloorExit(Vector3 position) {
+	//function that instantiates the floor exit tile (called by the player when the key is found) or instantiates the secret exit tile
+	public void openFloorExit(Vector3 position, bool secret = false) {
 
-		//instantiate the floor exit tile at the given position
-		Instantiate (floorExit, position, Quaternion.identity);
+		if (secret == false) {
+
+			//instantiate the floor exit tile at the given position
+			Instantiate (floorExit, position, Quaternion.identity);
+
+		} else {
+
+			//instantiate the floor exit tile at the given position
+			Instantiate (secretExit, position, Quaternion.identity);
+		}
 
 	}
 
@@ -817,5 +832,19 @@ public class BoardManager : MonoBehaviour {
 
 		//instantiate the key object near the center of the room
 		Instantiate (Key, new Vector3 (columns/2, rows/2, 0f), Quaternion.identity);
+	}
+
+	//get function for the current walls variable
+	public int getCurrentWalls () {
+
+		//return the current number of walls
+		return currentWalls;
+	}
+
+	//decrement function for the current walls variable
+	public void decrementCurrentWalls() {
+
+		//decrement the number of walls
+		currentWalls--;
 	}
 }
