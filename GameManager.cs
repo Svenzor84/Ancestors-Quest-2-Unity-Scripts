@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour {
 	private bool keySpawn = false;
 
 	//bool that keeps track of if the player is accessing the secret room
-	private bool secretRoom = true;
+	private bool secretRoom = false;
 
 	//keep track of the player's final position in the room (for spawning the player in the next room)
 	private Vector3 finalPlayerPos = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -541,6 +541,13 @@ public class GameManager : MonoBehaviour {
 
 		//return the floor number
 		return floor;
+	}
+
+	//function that returns the current room number
+	public int GetRoom() {
+
+		//return the room number
+		return room;
 	}
 
 	//function that grabs the player's final position from the previous room, allowing us to spawn the player at the corresponding spot in the new room
