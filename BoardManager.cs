@@ -662,7 +662,7 @@ public class BoardManager : MonoBehaviour {
 					exitPosY = Random.Range (0, rows);
 				}
 			
-			//otherwise the number is 1
+			//otherwise the number is greater than 1
 			} else {
 			
 				//get another random number, either 0 or 1, and if the number is 0
@@ -693,10 +693,12 @@ public class BoardManager : MonoBehaviour {
 			int playerY = (int)GameManager.instance.PlayerPos().y;
 
 			//if the x coordinate is greater than the number of columns for the current room
-			if (playerX > (columns - 1)) {
+			if ((playerX > (columns - 1)) || (playerY !=0 && playerY != (columns - 1) && 
+			                                  playerX !=0 && playerX < (columns - 1))) {
 
 				//set the x coordinate to columns - 1
 				playerX = columns - 1;
+
 			}
 
 			//set the player's new starting position

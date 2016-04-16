@@ -22,6 +22,150 @@ public class LoadOnClick : MonoBehaviour {
 	public Text musicVolume;
 	public Text efxVolume;
 
+	//called once per frame
+	public void Update () {
+
+		//if the music source is muted
+		if (SoundManager.instance.musicSource.mute) {
+			
+			//set the music UI text object to an empty string
+			musicVolume.text = "";
+			
+			//otherwise set the text according to the music volume
+		} else if (SoundManager.instance.musicSource.volume > 0.91) {
+			
+			musicVolume.text = "||||||||||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.81) {
+			
+			musicVolume.text = "|||||||||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.71) {
+			
+			musicVolume.text = "||||||||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.61) {
+			
+			musicVolume.text = "|||||||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.51) {
+			
+			musicVolume.text = "||||||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.41) {
+			
+			musicVolume.text = "|||||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.31) {
+			
+			musicVolume.text = "||||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.21) {
+			
+			musicVolume.text = "|||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.11) {
+			
+			musicVolume.text = "||";
+			
+		} else if (SoundManager.instance.musicSource.volume > 0.01) {
+			
+			musicVolume.text = "|";
+			
+		}
+		
+		//if the sound effects source is muted
+		if (SoundManager.instance.efxSource.mute) {
+			
+			//set the sound effects UI text object to an empty string
+			efxVolume.text = "";
+			
+			//otherwise set the sound effects UI text according to the sound effects volume
+		} else if (SoundManager.instance.efxSource.volume > 0.91) {
+			
+			efxVolume.text = "||||||||||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.81) {
+			
+			efxVolume.text = "|||||||||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.71) {
+			
+			efxVolume.text = "||||||||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.61) {
+			
+			efxVolume.text = "|||||||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.51) {
+			
+			efxVolume.text = "||||||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.41) {
+			
+			efxVolume.text = "|||||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.31) {
+			
+			efxVolume.text = "||||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.21) {
+			
+			efxVolume.text = "|||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.11) {
+			
+			efxVolume.text = "||";
+			
+		} else if (SoundManager.instance.efxSource.volume > 0.01) {
+			
+			efxVolume.text = "|";
+			
+		}
+
+		//set the text for the song title
+		if (SoundManager.instance.musicSource.clip == SoundManager.instance.Warlock) {
+
+			//set the song tesxt to warlock
+			songText.text = "Warlock";
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Morbid) {
+
+			//set the song text to morbid
+			songText.text = "Morbid";
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Pyramid) {
+			
+			//set the song text to morbid
+			songText.text = "Pyramid";
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Intense) {
+			
+			//set the song text to morbid
+			songText.text = "Intense";
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Sheriff) {
+			
+			//set the song text to morbid
+			songText.text = "Sheriff";
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Gavotte) {
+			
+			//set the song text to morbid
+			songText.text = "Gavotte";
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Apoc) {
+			
+			//set the song text to morbid
+			songText.text = "Apoc";
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Metal) {
+			
+			//set the song text to morbid
+			songText.text = "Metal";
+		}
+	}
+
 	//function that loads the main scene of quits the application
 	public void LoadScene (int retry){
 
@@ -87,8 +231,6 @@ public class LoadOnClick : MonoBehaviour {
 					//so mute the sound effects source
 					SoundManager.instance.efxSource.mute = true;
 
-					//set the sound effects UI text object depending on current volume
-					efxVolume.text = "";
 				}
 				break;
 
@@ -107,8 +249,6 @@ public class LoadOnClick : MonoBehaviour {
 					//so mute the music source
 					SoundManager.instance.musicSource.mute = true;
 
-					//set the music UI text object depending on current volume
-					musicVolume.text = "";
 				}
 
 				break;
@@ -141,9 +281,6 @@ public class LoadOnClick : MonoBehaviour {
 					//switch to the Metal tack
 					SoundManager.instance.musicSource.clip = SoundManager.instance.Metal;
 
-					//change the Song Text to Metal
-					songText.text = "Metal";
-
 					//start the song
 					SoundManager.instance.musicSource.Play ();
 
@@ -153,31 +290,47 @@ public class LoadOnClick : MonoBehaviour {
 					//switch to the Apocaclypse track
 					SoundManager.instance.musicSource.clip = SoundManager.instance.Apoc;
 
-					//change the Song Text to Apoc
-					songText.text = "Apoc";
-
 					//start the song
 					SoundManager.instance.musicSource.Play ();
 
-				//otherwise, 
+				//if the music track is currently playing Apoc
 				} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Apoc) {
 
 					//switch to the Warlock track
 					SoundManager.instance.musicSource.clip = SoundManager.instance.Warlock;
 				
-					//change the Song Text to Apoc
-					songText.text = "Warlock";
-				
 					//start the song
 					SoundManager.instance.musicSource.Play ();
 
-				} else if (SoundManager.instance.musicSource.clip = SoundManager.instance.Warlock) {
+				//if the music track is currently playing Warlock
+				} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Warlock) {
+
+					//switch to the Morbid track
+					SoundManager.instance.musicSource.clip = SoundManager.instance.Morbid;
+
+					//start the song
+					SoundManager.instance.musicSource.Play();
+
+				} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Morbid) {
+
+					//switch to the Pyramid track
+					SoundManager.instance.musicSource.clip = SoundManager.instance.Pyramid;
+
+					//start the song
+					SoundManager.instance.musicSource.Play ();
+
+				} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Pyramid) {
+
+					//switch to the Intense track
+					SoundManager.instance.musicSource.clip = SoundManager.instance.Intense;
+
+					//start the song
+					SoundManager.instance.musicSource.Play ();
+
+				} else {
 
 					//switch the track back to Gavotte
 					SoundManager.instance.musicSource.clip = SoundManager.instance.Gavotte;
-
-					//change the Song Text to Gavotte
-					songText.text = "Gavotte";
 
 					//start the song
 					SoundManager.instance.musicSource.Play ();
@@ -223,106 +376,6 @@ public class LoadOnClick : MonoBehaviour {
 				break;
 		}
 
-		//set the music UI text object to an empty string
-		musicVolume.text = "";
-
-		//if the music source is muted
-		if (SoundManager.instance.musicSource.mute) {
-
-			//do nothing
-
-		//otherwise set the text according to the music volume
-		} else if (SoundManager.instance.musicSource.volume > 0.91) {
-			
-			musicVolume.text = "||||||||||";
-			
-		} else if (SoundManager.instance.musicSource.volume > 0.81) {
-			
-			musicVolume.text = "|||||||||";
-			
-		} else if (SoundManager.instance.musicSource.volume > 0.71) {
-			
-			musicVolume.text = "||||||||";
-			
-		} else if (SoundManager.instance.musicSource.volume > 0.61) {
-			
-			musicVolume.text = "|||||||";
-			
-		} else if (SoundManager.instance.musicSource.volume > 0.51) {
-			
-			musicVolume.text = "||||||";
-			
-		} else if (SoundManager.instance.musicSource.volume > 0.41) {
-			
-			musicVolume.text = "|||||";
-			
-		} else if (SoundManager.instance.musicSource.volume > 0.31) {
-			
-			musicVolume.text = "||||";
-			
-		} else if (SoundManager.instance.musicSource.volume > 0.21) {
-			
-			musicVolume.text = "|||";
-
-		} else if (SoundManager.instance.musicSource.volume > 0.11) {
-			
-			musicVolume.text = "||";
-			
-		} else if (SoundManager.instance.musicSource.volume > 0.01) {
-			
-			musicVolume.text = "|";
-			
-		}
-		
-		//set the sound effects UI text object to an empty string
-		efxVolume.text = "";
-
-		//if the sound effects source is muted
-		if (SoundManager.instance.efxSource.mute) {
-
-			//do nothing
-
-		//otherwise set the sound effects UI text according to the sound effects volume
-		} else if (SoundManager.instance.efxSource.volume > 0.91) {
-			
-			efxVolume.text = "||||||||||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.81) {
-			
-			efxVolume.text = "|||||||||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.71) {
-			
-			efxVolume.text = "||||||||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.61) {
-			
-			efxVolume.text = "|||||||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.51) {
-			
-			efxVolume.text = "||||||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.41) {
-			
-			efxVolume.text = "|||||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.31) {
-			
-			efxVolume.text = "||||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.21) {
-			
-			efxVolume.text = "|||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.11) {
-			
-			efxVolume.text = "||";
-			
-		} else if (SoundManager.instance.efxSource.volume > 0.01) {
-			
-			efxVolume.text = "|";
-			
-		}
+		Update ();
 	}
 }

@@ -38,7 +38,7 @@ public class Conversation : MonoBehaviour {
 
 
 			//if the player has spent enough xp to grow a beard
-			if (GameObject.Find ("Player").GetComponent<Player>().playerExpSpent () > 20) {
+			if (GameObject.Find ("Player").GetComponent<Player>().playerExpSpent () > 5) {
 
 				//have the kindly man draw his scissors
 				GameObject.FindWithTag ("Kindly").GetComponent<Animator>().SetTrigger ("Draw");

@@ -127,6 +127,9 @@ public class GameManager : MonoBehaviour {
 	private Text currentTime;
 	private int minutes = 0;
 	private int seconds = 0;
+	private int finalMins;
+	private int finalSecs;
+
 
 	//awake function will start with a singleton pattern
 	void Awake () {
@@ -170,7 +173,8 @@ public class GameManager : MonoBehaviour {
 		//if the continue game boolean is true
 		if (continueGame) {
 
-			//start the music back up
+			//start the music back on the Warlock track
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Warlock;
 			SoundManager.instance.musicSource.Play ();
 
 			//set the floor and room values
@@ -185,8 +189,9 @@ public class GameManager : MonoBehaviour {
 			weaponDrop = false;
 			armorDrop = false;
 
-			//make sure it is the player's turn
-			//playersTurn = true;
+			//set the current time to the final minutes and seconds of the run so the player doesnt lose time
+			minutes = finalMins;
+			seconds = finalSecs;
 
 		//if the retry bool is false
 		} else if (!retry) {
@@ -395,9 +400,23 @@ public class GameManager : MonoBehaviour {
 	//function for ending the game
 	public void GameOver() {
 
-		//play the retired sheriff's theme
-		SoundManager.instance.musicSource.clip = SoundManager.instance.Sheriff;
-		SoundManager.instance.musicSource.Play ();
+		//log the final times for this run
+		finalMins = minutes;
+		finalSecs = seconds;
+
+		//if the player has not beaten the beholder
+		if (!gameWin) {
+
+			//play the retired sheriff's theme
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Sheriff;
+			SoundManager.instance.musicSource.Play ();
+
+		} else {
+
+			//play narrow escape
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Escape;
+			SoundManager.instance.musicSource.Play ();
+		}
 
 		//set the floor text to tell the player how far they got
 		floorText.text = "Your quest lasted for"; 
@@ -423,16 +442,32 @@ public class GameManager : MonoBehaviour {
 		//if the player has won the game, the game over message has to change
 		if (!gameWin) {
 
-			//set the time text to tell the player how long it took them
-			timeText.text = "You took " + minutes + " minutes and " + seconds + " seconds\nto meet your doom.";
+			if (finalMins == 1) {
+
+				//set the time text to tell the player how long it took them
+				timeText.text = "You took " + finalMins + " minute and " + finalSecs + " seconds\nto meet your doom.";
+
+			} else {
+
+				//set the time text to tell the player how long it took them
+				timeText.text = "You took " + finalMins + " minutes and " + finalSecs + " seconds\nto meet your doom.";
+			}
 
 			//change the color of the room image
 			roomImage.GetComponent<Image>().color = new Color (0.318f, 0, 0);
 
 		} else {
 
-			//set the time text to tell the player how long it took them
-			timeText.text = "You took " + minutes + " minutes and " + seconds + " seconds\nto fulfill your destiny!";
+			if (finalMins == 1) {
+
+				//set the time text to tell the player how long it took them
+				timeText.text = "You took " + finalMins + " minute and " + finalSecs + " seconds\nto fulfill your destiny!";
+
+			} else {
+
+				//set the time text to tell the player how long it took them
+				timeText.text = "You took " + finalMins + " minutes and " + finalSecs + " seconds\nto fulfill your destiny!";
+			}
 
 			//change the color of the room image
 			roomImage.GetComponent<Image>().color = new Color (0, 0.318f, 0);
@@ -481,7 +516,7 @@ public class GameManager : MonoBehaviour {
 			seconds = (int)(Time.time - startTime);
 
 			//if the seconds have reached 60
-			if (seconds == 60) {
+			if (seconds >= 60) {
 
 				//reset the seconds to 0
 				seconds = 0;

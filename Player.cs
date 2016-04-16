@@ -2282,6 +2282,8 @@ public class Player : MovingObject {
 		//if the player's health reaches zero
 		if (health <= 0) {
 
+			GameManager.instance.setGameWin (false);
+
 			StartCoroutine (PlayerDeath ());
 
 		}
@@ -2293,7 +2295,7 @@ public class Player : MovingObject {
 		//play the gameover sound
 		SoundManager.instance.PlaySingle (gameOverSound);
 		
-		//stop playing the background music
+		//stop the background  music
 		SoundManager.instance.musicSource.Stop ();
 
 		//call the trigger animation function to start the player and equipment death animations
@@ -2486,7 +2488,7 @@ public class Player : MovingObject {
 	}
 
 	//function that sets the player and all armor, weapon, and beard animators triggers
-	private void triggerAnimation (string trigger) {
+	public void triggerAnimation (string trigger) {
 
 		//set the player animator trigger to the string passed into the function
 		animator.SetTrigger (trigger);
@@ -2521,7 +2523,7 @@ public class Player : MovingObject {
 	}
 
 	//overloaded function that sets the player and armor animations to one trigger, and the weapon animations to another
-	private void triggerAnimation (string trigger, string trigger2) {
+	public void triggerAnimation (string trigger, string trigger2) {
 
 		//set the player and armor animations to the first argument
 		animator.SetTrigger (trigger);

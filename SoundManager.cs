@@ -21,7 +21,11 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip Apoc;
 	public AudioClip Metal;
 	public AudioClip Warlock;
+	public AudioClip Intense;
+	public AudioClip Pyramid;
+	public AudioClip Morbid;
 	public AudioClip Sheriff;
+	public AudioClip Escape;
 
 	//allows us to access all public functions and variables from any script in the game
 	public static SoundManager instance = null;

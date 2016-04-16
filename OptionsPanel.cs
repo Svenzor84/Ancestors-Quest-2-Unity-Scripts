@@ -16,9 +16,10 @@ public class OptionsPanel : MonoBehaviour {
 	//store a reference to the options menu so we can enable and disable it when the options button is clicked
 	private GameObject optionsPanel;
 
-	//text to display for the music and sound effects volume
+	//text to display for the song text, music and sound effects volume
 	public Text musicVolume;
 	public Text efxVolume;
+	public Text songText;
 
 	void Start () {
 	
@@ -154,6 +155,48 @@ public class OptionsPanel : MonoBehaviour {
 				
 				efxVolume.text = "|";
 				
+			}
+
+			//set the text for the song title
+			if (SoundManager.instance.musicSource.clip == SoundManager.instance.Warlock) {
+				
+				//set the song tesxt to warlock
+				songText.text = "Warlock";
+				
+			} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Morbid) {
+				
+				//set the song text to morbid
+				songText.text = "Morbid";
+				
+			} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Pyramid) {
+				
+				//set the song text to morbid
+				songText.text = "Pyramid";
+				
+			} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Intense) {
+				
+				//set the song text to morbid
+				songText.text = "Intense";
+				
+			} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Sheriff) {
+				
+				//set the song text to morbid
+				songText.text = "Sheriff";
+				
+			} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Gavotte) {
+				
+				//set the song text to morbid
+				songText.text = "Gavotte";
+				
+			} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Apoc) {
+				
+				//set the song text to morbid
+				songText.text = "Apoc";
+				
+			} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Metal) {
+				
+				//set the song text to morbid
+				songText.text = "Metal";
 			}
 		}
 	}
