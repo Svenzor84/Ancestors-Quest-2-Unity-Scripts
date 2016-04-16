@@ -208,6 +208,21 @@ public class Damagable : MonoBehaviour {
 				animator.SetTrigger("bossDeath");
 			}
 
+			//set the game win boolean to true
+			GameManager.instance.setGameWin(true);
+
+			//stop the music from playing
+			SoundManager.instance.musicSource.Stop ();
+
+			//grab a temporary player script reference
+			Player tempPlayer = GameObject.FindWithTag ("Player").GetComponent<Player>();
+
+			//update the status display to tell the player they have won
+			tempPlayer.statusUpdate ("You defeated the Beholder!!!", new Color (0.0f, 1.0f, 0.0f));
+
+			//call the trigger animation function and pass in the trigger "Win"
+			tempPlayer.triggerAnimation ("Win");
+
 		} else {
 
 			//make sure the animator is enabled
@@ -217,14 +232,29 @@ public class Damagable : MonoBehaviour {
 			animator.SetTrigger ("death");
 		}
 
-		//wait for a delay to allow the animation to finish
-		yield return new WaitForSeconds (1.5f);
-
 		//play the enemy death sound (currently the game over sound)
 		SoundManager.instance.RandomizeSfx (enemyDeath);
 
+		if (!GameManager.instance.getGameWin ()) {
+
+			//wait for a delay to allow the animation to finish
+			yield return new WaitForSeconds (1.5f);
+
+		} else {
+
+			//give the player a little extra time to enjoy his victory
+			yield return new WaitForSeconds (3.0f);
+		}
+
 		//deactivate the enemy object
 		gameObject.SetActive (false);
+
+		//if the boss was just killed
+		if (GameManager.instance.getGameWin ()) {
+
+			//start the end game function
+			GameManager.instance.GameOver ();
+		}
 	}
 
 	//handle what happens when a trigger collider enters the damagable object

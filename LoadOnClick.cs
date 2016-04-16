@@ -54,6 +54,16 @@ public class LoadOnClick : MonoBehaviour {
 			//and then load the menu scene
 			Application.LoadLevel ("Menu");
 		}
+
+		//check to see if 3 was passed into the function as a parameter
+		if (retry == 3) {
+
+			//if so set the game manager continue bool to true
+			GameManager.instance.continueGame = true;
+
+			//and load the main scene
+			Application.LoadLevel ("Main");
+		}
 	}
 
 	//function that changes the in game music and toggles muting for music and sound effects
@@ -150,7 +160,18 @@ public class LoadOnClick : MonoBehaviour {
 					SoundManager.instance.musicSource.Play ();
 
 				//otherwise, 
-				} else {
+				} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Apoc) {
+
+					//switch to the Warlock track
+					SoundManager.instance.musicSource.clip = SoundManager.instance.Warlock;
+				
+					//change the Song Text to Apoc
+					songText.text = "Warlock";
+				
+					//start the song
+					SoundManager.instance.musicSource.Play ();
+
+				} else if (SoundManager.instance.musicSource.clip = SoundManager.instance.Warlock) {
 
 					//switch the track back to Gavotte
 					SoundManager.instance.musicSource.clip = SoundManager.instance.Gavotte;

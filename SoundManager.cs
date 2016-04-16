@@ -20,6 +20,8 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip Gavotte;
 	public AudioClip Apoc;
 	public AudioClip Metal;
+	public AudioClip Warlock;
+	public AudioClip Sheriff;
 
 	//allows us to access all public functions and variables from any script in the game
 	public static SoundManager instance = null;
@@ -51,13 +53,13 @@ public class SoundManager : MonoBehaviour {
 		if (Application.loadedLevelName == "Main") {
 
 			//set the volume of the game music clip to 0.2
-			musicSource.volume = 0.2f;
+			musicSource.volume = 0.5f;
 
 			//set the volume of the sound effect clip to 0.2
-			efxSource.volume = 0.2f;
+			efxSource.volume = 0.5f;
 
-			//set the game music clip to the Metal music clip and play it
-			musicSource.clip = Metal;
+			//set the game music clip to the Warlock music clip and play it
+			musicSource.clip = Warlock;
 
 			if(musicSource.isActiveAndEnabled) {
 				musicSource.Play ();

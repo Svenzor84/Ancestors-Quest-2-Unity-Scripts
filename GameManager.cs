@@ -53,6 +53,9 @@ public class GameManager : MonoBehaviour {
 	//track if the player is advancing in the game, or attempting to retry from the beginning
 	public bool retry = false;
 
+	//track if the player is continuing the game after beating the final boss
+	public bool continueGame = false;
+
 	//track if it is the player's turn or not (hidden in the editor, despite being public)
 	public bool playersTurn = true;
 
@@ -85,6 +88,9 @@ public class GameManager : MonoBehaviour {
 	//stores a reference to the replay or quit UI panel so we can enable and disable on game over
 	private GameObject retryOrQuit;
 
+	//stores as reference to the continue button so we can enable it only when the player has beaten the final boss
+	private GameObject continueButton;
+
 	//stores references to the status bottom/top background panels so we can enable and disable on room/floor change
 	private GameObject statusBottomBackPanel;
 	private GameObject statusTopBackPanel;
@@ -109,6 +115,9 @@ public class GameManager : MonoBehaviour {
 
 	//bool that keeps track of if the player is accessing the secret room
 	private bool secretRoom = false;
+
+	//acknowledge if the player has beaten the game or not
+	private bool gameWin = false;
 
 	//keep track of the player's final position in the room (for spawning the player in the next room)
 	private Vector3 finalPlayerPos = new Vector3 (0.0f, 0.0f, 0.0f);
@@ -158,8 +167,29 @@ public class GameManager : MonoBehaviour {
 		//fade the game back in from black
 		this.GetComponent<ScreenFade> ().BeginFade (-1);
 
+		//if the continue game boolean is true
+		if (continueGame) {
+
+			//start the music back up
+			SoundManager.instance.musicSource.Play ();
+
+			//set the floor and room values
+			floor = 10;
+			room = 1;
+
+			//reset the game win booleans and continue game booleans
+			gameWin = false;
+			continueGame = false;
+
+			//reset the armor and weapon drop bools
+			weaponDrop = false;
+			armorDrop = false;
+
+			//make sure it is the player's turn
+			//playersTurn = true;
+
 		//if the retry bool is false
-		if (!retry) {
+		} else if (!retry) {
 
 			//if you have reached the end of the current floor
 			if (room == 10) {
@@ -198,6 +228,9 @@ public class GameManager : MonoBehaviour {
 			//set the floor to 1
 			floor = 1;
 
+			//set game win boolean to false
+			gameWin = false;
+
 			//set player exp to 0
 			playerExpPoints = 0;
 			playerExpSpent = 0;
@@ -231,7 +264,8 @@ public class GameManager : MonoBehaviour {
 			weaponDrop = true;
 			armorDrop = false;
 
-			//start playing the room music again
+			//set the music to Warlock and start playing the room music again
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Warlock;
 			SoundManager.instance.musicSource.Play ();
 		}
 
@@ -262,6 +296,9 @@ public class GameManager : MonoBehaviour {
 
 		//find the retry or quit UI object and save a reference
 		retryOrQuit = GameObject.Find ("retryOrQuitPanel");
+
+		//find the continue button
+		continueButton = GameObject.Find ("continueButton");
 
 		//find the options UI button object and save a reference
 		statusBottomBackPanel = GameObject.Find ("BottomStatusBackPanel");
@@ -298,6 +335,9 @@ public class GameManager : MonoBehaviour {
 
 		//find the time text game object and save a reference to the text component
 		timeText = GameObject.Find ("timeText").GetComponent<Text> ();
+
+		//disable the continue button
+		continueButton.SetActive (false);
 
 		//disable the retry or quit UI panel
 		retryOrQuit.SetActive (false);
@@ -355,6 +395,10 @@ public class GameManager : MonoBehaviour {
 	//function for ending the game
 	public void GameOver() {
 
+		//play the retired sheriff's theme
+		SoundManager.instance.musicSource.clip = SoundManager.instance.Sheriff;
+		SoundManager.instance.musicSource.Play ();
+
 		//set the floor text to tell the player how far they got
 		floorText.text = "Your quest lasted for"; 
 
@@ -376,14 +420,36 @@ public class GameManager : MonoBehaviour {
 			roomText.text += " " + room + " room.";
 		}
 
-		//set the time text to tell the player how long it took them
-		timeText.text = "You took " + minutes + " minutes and " + seconds + " seconds\nto meet your doom.";
+		//if the player has won the game, the game over message has to change
+		if (!gameWin) {
+
+			//set the time text to tell the player how long it took them
+			timeText.text = "You took " + minutes + " minutes and " + seconds + " seconds\nto meet your doom.";
+
+			//change the color of the room image
+			roomImage.GetComponent<Image>().color = new Color (0.318f, 0, 0);
+
+		} else {
+
+			//set the time text to tell the player how long it took them
+			timeText.text = "You took " + minutes + " minutes and " + seconds + " seconds\nto fulfill your destiny!";
+
+			//change the color of the room image
+			roomImage.GetComponent<Image>().color = new Color (0, 0.318f, 0);
+		}
 
 		//enable the room image
 		roomImage.SetActive (true);
 
 		//enable the retry or quit panel
 		retryOrQuit.SetActive (true);
+
+		//if the player has beaten the final boss
+		if (gameWin) {
+
+			//enable the continue button
+			continueButton.SetActive (true);
+		}
 
 		//disable the health text
 		healthText.SetActive (false);
@@ -398,8 +464,12 @@ public class GameManager : MonoBehaviour {
 		statusBottomBackPanel.SetActive (false);
 		statusTopBackPanel.SetActive (false);
 
-		//disable the game manager
-		enabled = false;
+		//if the player has not defeated the final boss
+		if (!gameWin) {
+
+			//disable the game manager
+			enabled = false;
+		}
 	}
 
 	void Update () {
@@ -505,7 +575,7 @@ public class GameManager : MonoBehaviour {
 		if (deadEnemies == enemies.Count){
 
 			//if the room number is divisible by 10
-			if ((room > 0 && room % 10 == 0) && !keySpawn) {
+			if ((room > 0 && room % 10 == 0) && !keySpawn && floor != 9) {
 
 				//call the spawn key function on the board manager script
 				this.boardScript.spawnKey ();
@@ -575,5 +645,17 @@ public class GameManager : MonoBehaviour {
 	public void secretRoomBool(bool value) {
 
 		secretRoom = value;
+	}
+
+	//function that allows access to the private member game win
+	public bool getGameWin() {
+
+		return gameWin;
+	}
+
+	//function that allows other scripts to set the game win boolean
+	public void setGameWin(bool gameWon) {
+
+		gameWin = gameWon;
 	}
 }
