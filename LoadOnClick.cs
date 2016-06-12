@@ -10,8 +10,9 @@
 using UnityEngine;
 using System.Collections;
 
-//allows us to access unity UI features
+//allows us to access unity UI features and scene management
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LoadOnClick : MonoBehaviour {
 
@@ -176,7 +177,7 @@ public class LoadOnClick : MonoBehaviour {
 			GameManager.instance.retry = true;
 
 			//and load the main scene
-			Application.LoadLevel ("Main");
+			SceneManager.LoadScene ("Main");
 		}
 
 		//check to see if 1 was passed into the function as a parameter
@@ -196,7 +197,7 @@ public class LoadOnClick : MonoBehaviour {
 			GameManager.Destroy (GameManager.instance.gameObject);
 
 			//and then load the menu scene
-			Application.LoadLevel ("Menu");
+			SceneManager.LoadScene ("Menu");
 		}
 
 		//check to see if 3 was passed into the function as a parameter
@@ -206,7 +207,7 @@ public class LoadOnClick : MonoBehaviour {
 			GameManager.instance.continueGame = true;
 
 			//and load the main scene
-			Application.LoadLevel ("Main");
+			SceneManager.LoadScene ("Main");
 		}
 	}
 

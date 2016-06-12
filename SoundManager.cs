@@ -54,7 +54,7 @@ public class SoundManager : MonoBehaviour {
 		DontDestroyOnLoad(gameObject);
 
 		//if the current loaded level is the Main scene
-		if (Application.loadedLevelName == "Main") {
+		if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Main") {
 
 			//set the volume of the game music clip to 0.2
 			musicSource.volume = 0.5f;

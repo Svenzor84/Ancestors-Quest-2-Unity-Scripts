@@ -16,6 +16,9 @@ public class Damagable : MonoBehaviour {
 	public int hp;
 	private int totalHp;
 
+	//variable that keeps track of the current phase (only used for bosses)
+	private int phase = 0;
+
 	//the xp value gained for killing the object
 	public int expValue;
 
@@ -100,20 +103,50 @@ public class Damagable : MonoBehaviour {
 				animator.SetTrigger("bossHit");
 			}
 
-			//get the percentage of enemy health remaining
-			float percent = (float)hp / (float)totalHp;
+			//set up the percent float
+			float percent;
+
+			//if the enemy is not dead
+			if (hp > 0) {
+
+				//get the percentage of enemy health remaining
+				percent = (float)hp / (float)totalHp;
+
+				//spawn enemy adds if the boss' health drops below certain thresholds
+				if (percent < 0.26 && phase < 3) {
+
+					GameManager.instance.boardScript.spawnAdds (6);
+					phase++;
+
+				} else if (percent < 0.51 && phase < 2) {
+
+					GameManager.instance.boardScript.spawnAdds (5);
+					phase++;
+
+				} else if (percent < 0.76 && phase < 1) {
+
+					GameManager.instance.boardScript.spawnAdds (2);
+					phase++;
+				}
+
+			//otherwise
+			} else {
+
+				//set the percentage to zero
+				percent = 0.0f;
+			}
 			
 			//set the health bar x scale and color depending on how much hp the enemy has left
 			healthBar.transform.localScale = new Vector2 (percent, 1.0f);
 			
 			//change the color of the health bar depending on how much hp the enemy has left
-			if (percent < 0.66f) {
+			if (percent < 0.33f) {
 				
-				healthBar.GetComponent<SpriteRenderer> ().color = new Color (1.0f, 1.0f, 0.0f);
+				healthBar.GetComponent<SpriteRenderer> ().color = new Color (1.0f, 0.0f, 0.0f);
 				
-			} else if (percent < 0.33f) {
+			} else if (percent < 0.66f) {
 				
-				healthBar.GetComponent<SpriteRenderer>().color = new Color (1.0f, 0.0f, 0.0f);
+				healthBar.GetComponent<SpriteRenderer>().color = new Color (1.0f, 1.0f, 0.0f);
 			}
 
 		//otherwise, if the object is not an enemy
@@ -128,8 +161,21 @@ public class Damagable : MonoBehaviour {
 			//set the animator trigger for enemy hit
 			animator.SetTrigger("enemyHit");
 
-			//get the percentage of enemy health remaining
-			float percent = (float)hp / (float)totalHp;
+			//set up the percent float
+			float percent;
+			
+			//if the enemy is not dead
+			if (hp > 0) {
+				
+				//get the percentage of enemy health remaining
+				percent = (float)hp / (float)totalHp;
+				
+				//otherwise
+			} else {
+				
+				//set the percentage to zero
+				percent = 0.0f;
+			}
 			
 			//set the health bar x scale and color depending on how much hp the enemy has left
 			healthBar.transform.localScale = new Vector2 (percent, 1.0f);
@@ -201,9 +247,12 @@ public class Damagable : MonoBehaviour {
 		//if the enemy is a boss
 		if (tag == "Boss") {
 
+			//set the room over bool to true so that enemies wont attack the player after killing the beholder
+			GameObject.FindWithTag("Player").GetComponent<Player>().roomOverSet(true);
+
 			//loop through the animators list
 			foreach(Animator animator in animators) {
-				
+
 				//and set all triggers to boss death
 				animator.SetTrigger("bossDeath");
 			}

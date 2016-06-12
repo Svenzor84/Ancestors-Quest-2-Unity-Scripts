@@ -46,6 +46,10 @@ public class BoardManager : MonoBehaviour {
 	public GameObject lockedFloorExit;
 	public GameObject Key;
 
+	//audio and gameobject for teleporting enemy adds into boss fight
+	public GameObject Teleport;
+	public AudioClip explosion;
+
 	//arrays of game objects to pass in the options for floor, wall, health, enemy, and outer wall tiles
 	public GameObject[] floorTiles;
 	public GameObject[] secretFloorTiles;
@@ -187,8 +191,8 @@ public class BoardManager : MonoBehaviour {
 							toInstantiate = secretFloorTiles [Random.Range (0, secretFloorTiles.Length)];
 
 							//also, instantiate the tiles that make up the hallway leading to the exit
-							Instantiate (secretFloorTiles[floor - 1], new Vector3 (columns + 1.0f, 2.0f), Quaternion.identity);
-							Instantiate (secretFloorTiles[floor - 1], new Vector3 (columns + 2.0f, 2.0f), Quaternion.identity);
+							Instantiate (toInstantiate, new Vector3 (columns + 1.0f, 2.0f), Quaternion.identity);
+							Instantiate (toInstantiate, new Vector3 (columns + 2.0f, 2.0f), Quaternion.identity);
 							Instantiate (roomExit, new Vector3 (columns + 3.0f, 2.0f), Quaternion.identity);
 							Instantiate (secretWallTiles[floor - 1], new Vector3 (columns + 4.0f, 2.0f), Quaternion.identity);
 							Instantiate (secretWallTiles[floor - 1], new Vector3 (columns + 4.0f, 3.0f), Quaternion.identity);
@@ -848,5 +852,24 @@ public class BoardManager : MonoBehaviour {
 
 		//decrement the number of walls
 		currentWalls--;
+	}
+
+	//function that spawns additional enemies into the boss fight depending on the battle phase
+	public void spawnAdds(int phase) {
+
+		//play the teleport effect (currently the explosion effect)
+		SoundManager.instance.RandomizeSfx (explosion);
+
+		//spawn a teleport at each spawn point for enemy adds
+		Destroy (Instantiate (Teleport, new Vector3 (0, 0, 0f), Quaternion.identity), 0.75f);
+		Destroy (Instantiate (Teleport, new Vector3 (columns - 1, 0, 0f), Quaternion.identity), 0.75f);
+		Destroy (Instantiate (Teleport, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity), 0.75f);
+		Destroy (Instantiate (Teleport, new Vector3 (0, rows - 1, 0f), Quaternion.identity), 0.75f);
+
+		//instantiate boss enemies of the given index into the boss room
+		Instantiate (bossTiles [phase], new Vector3 (0, 0, 0f), Quaternion.identity);
+		Instantiate (bossTiles [phase], new Vector3 (columns - 1, 0, 0f), Quaternion.identity);
+		Instantiate (bossTiles [phase], new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
+		Instantiate (bossTiles [phase], new Vector3 (0, rows - 1, 0f), Quaternion.identity);
 	}
 }

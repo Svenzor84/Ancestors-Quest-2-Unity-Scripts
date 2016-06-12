@@ -62,6 +62,9 @@ public class MainMenuButtons : MonoBehaviour {
 				//skip the camera to its end position
 				GameObject.Find ("Main Camera").GetComponent<Animator> ().SetTrigger ("Skip");
 
+				//skip the map to it's final resting spot
+				GameObject.FindGameObjectWithTag ("Map").GetComponent<Animator>().SetTrigger ("Skip");
+
 				//activate the Main Menu Buttons
 				GameObject.Find ("Cloud").GetComponent<SceneEffects> ().ActivateButtons ();
 

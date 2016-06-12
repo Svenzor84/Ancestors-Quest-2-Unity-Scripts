@@ -9,6 +9,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class Descendant : MonoBehaviour {
 
@@ -49,6 +50,6 @@ public class Descendant : MonoBehaviour {
 		SoundManager.Destroy(SoundManager.instance.gameObject);
 		
 		//load the Main Scene to start the game
-		Application.LoadLevel ("Main");
+		SceneManager.LoadScene ("Main");
 	}
 }

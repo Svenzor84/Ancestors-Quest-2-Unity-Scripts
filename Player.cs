@@ -10,8 +10,9 @@
 using UnityEngine;
 using System.Collections;
 
-//allows us to access unity UI features
+//allows us to access unity UI features and scene management
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 //the player class inherits from MovingObject instead of from the default monobehaviour
 public class Player : MovingObject {
@@ -232,9 +233,10 @@ public class Player : MovingObject {
 	//a bool that tells us if the current room is over
 	private bool roomOver = false;
 
-	//a bool that tells us if the player cast a spell last turn, or has haste
+	//a bool that tells us if the player took an extra action last turn, or has haste (gets an extra action this turn), or double clicked already this turn
 	private bool playerSlow = false;
 	private bool playerQuick = false;
+	private bool playerClick = false;
 
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBPLAYER
 
@@ -385,8 +387,8 @@ public class Player : MovingObject {
 		//enable or disable the level up UI buttons depending on the player's current xp
 		showStatInvButtons ();
 
-		//if it is not the player's turn, or the player cast a spell last turn, simply run no other code
-		if (!GameManager.instance.playersTurn || playerSlow) {
+		//if it is not the player's turn, or the player took an extra action last turn, or the current room is over simply run no other code
+		if (!GameManager.instance.playersTurn || playerSlow || roomOver) {
 
 			return;
 		}
@@ -1216,7 +1218,8 @@ public class Player : MovingObject {
 		GameManager.instance.PlayerPos (this.transform.position);
 
 		//call the load room function and pass in the currently loaded room as the parameter
-		Application.LoadLevel (Application.loadedLevel);
+		//Application.LoadLevel (Application.loadedLevel);
+		SceneManager.LoadScene (SceneManager.GetActiveScene().name);
 	}
 
 	//funciton that causes the player to lose health
@@ -1862,8 +1865,7 @@ public class Player : MovingObject {
 		case 0:
 
 			//if the player does not have enough exp to increase the requested stat
-			//Note: the int casts were left in place when the int substat was changed to XpMod in case I decide to change it back
-			if (exp < (int)(strength * 100)) {
+			if (exp < ((expSpent * 100) + 100)) {
 
 				//simply play the gameover sound
 				SoundManager.instance.RandomizeSfx (gameOverSound);
@@ -1872,7 +1874,7 @@ public class Player : MovingObject {
 			} else {
 
 				//subtract the appropriate amount of experience calculated from the current stat value
-				exp -= (int)(strength * 100); 
+				exp -= ((expSpent * 100) + 100); 
 
 				//increase the requested stat
 				strength++;
@@ -1891,7 +1893,7 @@ public class Player : MovingObject {
 		case 1:
 
 			//if the player does not have enough exp to increase the requested stat
-			if (exp < (int)(dexterity * 100)) {
+			if (exp < ((expSpent * 100) + 100)) {
 
 				//simplly play the gameover sound
 				SoundManager.instance.RandomizeSfx (gameOverSound);
@@ -1900,7 +1902,7 @@ public class Player : MovingObject {
 			} else {
 
 				//subtract the appropriate amount of experience calculated from the current stat value
-				exp -= (int)(dexterity * 100); 
+				exp -= ((expSpent * 100) + 100); 
 			
 				//increase the requested stat
 				dexterity++;
@@ -1919,7 +1921,7 @@ public class Player : MovingObject {
 		case 2:
 
 			//if the player does not have enough exp to increase the requested stat
-			if (exp < (int)(intelligence * 100)) {
+			if (exp < ((expSpent * 100) + 100)) {
 				
 				//simplly play the gameover sound
 				SoundManager.instance.RandomizeSfx (gameOverSound);
@@ -1928,7 +1930,7 @@ public class Player : MovingObject {
 			} else {
 
 				//subtract the appropriate amount of experience calculated from the current stat value 
-				exp -= (int)(intelligence * 100); 
+				exp -= ((expSpent * 100) + 100); 
 			
 				//increase the requested stat
 				intelligence++;
@@ -1947,7 +1949,7 @@ public class Player : MovingObject {
 		case 3:
 
 			//if the player does not have enough exp to increase the requested stat
-			if (exp < (int)(constitution * 100)) {
+			if (exp < ((expSpent * 100) + 100)) {
 				
 				//simplly play the gameover sound
 				SoundManager.instance.RandomizeSfx (gameOverSound);
@@ -1956,7 +1958,7 @@ public class Player : MovingObject {
 			} else {
 
 				//subtract the appropriate amount of experience calculated from the current stat value
-				exp -= (int)(constitution * 100); 
+				exp -= ((expSpent * 100) + 100); 
 			
 				//increase the requested stat
 				constitution++;
@@ -2081,43 +2083,56 @@ public class Player : MovingObject {
 		cloakUIButton.SetActive (false);
 		itemHelp.text = "You do not currently possess a Special Equipment Item.";
 
-		//next, check each stat vs player experience to see if the button should be activated
-		//Note: int cast was left in place after changing the int sub stat to XpMod in case I decide to change it back
-		if (exp >= (int)(strength * 100)) {
+		//next, check to see if the level up buttons should be activated
+		if (exp >= ((expSpent * 100) + 100)) {
 
-			//activate the button if the player has enough exp
-			strUp.SetActive (true);
-
-			//replace the level up indicator
-			levelUpIndicator.sortingLayerName = "Units";
-		}
-
-		if (exp >= (int)(dexterity * 100)) {
-
-			//activate the button if the player has enough exp
+			//activate the buttons if the player has enough exp
+			strUp.SetActive(true);
 			dexUp.SetActive (true);
-
-			//replace the level up indicator
-			levelUpIndicator.sortingLayerName = "Units";
-		}
-
-		if (exp >= (int)(intelligence * 100)) {
-
-			//activate the button if the player has enough exp
 			intUp.SetActive (true);
-
-			//replace the level up indicator
-			levelUpIndicator.sortingLayerName = "Units";
-		}
-
-		if (exp >= (int)(constitution * 100)) {
-
-			//activate the button if the player has enough exp
 			conUp.SetActive (true);
 
 			//replace the level up indicator
 			levelUpIndicator.sortingLayerName = "Units";
 		}
+
+		//Note: int cast was left in place after changing the int sub stat to XpMod in case I decide to change it back
+		//Note: this section commented out due to the change in exp cost logic (now based on total exp spent, not the stat to be increased)
+		//if (exp >= (int)(strength * 100)) {
+		//
+			//activate the button if the player has enough exp
+			//strUp.SetActive (true);
+
+			//replace the level up indicator
+			//levelUpIndicator.sortingLayerName = "Units";
+		//}
+
+		//if (exp >= (int)(dexterity * 100)) {
+
+			//activate the button if the player has enough exp
+			//dexUp.SetActive (true);
+
+			//replace the level up indicator
+			//levelUpIndicator.sortingLayerName = "Units";
+		//}
+
+		//if (exp >= (int)(intelligence * 100)) {
+
+			//activate the button if the player has enough exp
+			//intUp.SetActive (true);
+
+			//replace the level up indicator
+			//levelUpIndicator.sortingLayerName = "Units";
+		//}
+
+		//if (exp >= (int)(constitution * 100)) {
+
+			//activate the button if the player has enough exp
+			//conUp.SetActive (true);
+
+			//replace the level up indicator
+			//levelUpIndicator.sortingLayerName = "Units";
+		//}
 
 		//finally, check each armor inventory requirement against the player's current inventory and activate any appropriate buttons
 		//if the player has found more than 7 armor sets
@@ -2284,6 +2299,8 @@ public class Player : MovingObject {
 
 			GameManager.instance.setGameWin (false);
 
+			roomOver = true;
+
 			StartCoroutine (PlayerDeath ());
 
 		}
@@ -2336,6 +2353,12 @@ public class Player : MovingObject {
 		return roomOver;
 	}
 
+	//function that sets the roomOver bool
+	public void roomOverSet(bool over) {
+
+		roomOver = over;
+	}
+
 	//a function that returns the player's current armor bonus (for damage reduction on enemy attacks)
 	public int damReduct() {
 
@@ -2356,76 +2379,89 @@ public class Player : MovingObject {
 	//decide what to do when the player double clicks on a tile
 	public void doubleClick (Vector3 position) {
 
-		//if the player has the fireOrb equipped
-		if (currentWeap == 9) {
+		//if the player has not double clicked yet this turn
+		if (!playerClick) {
 
-			//play the randomized explosion sound effect
-			SoundManager.instance.RandomizeSfx (explosion);
+			//if the player has the fireOrb equipped
+			if (currentWeap == 9) {
 
-			//start the fireOrb attack animation
-			fireOrbAnimator.SetTrigger ("playerAttack");
+				//play the randomized explosion sound effect
+				SoundManager.instance.RandomizeSfx (explosion);
 
-			//call the animation trigger function and pass in playerAttack
-			triggerAnimation ("playerAttack");
+				//start the fireOrb attack animation
+				fireOrbAnimator.SetTrigger ("playerAttack");
 
-			//spawn a fireball at position, as well as four other adjacent positions, and set them to destroy after a delay
-			Destroy(Instantiate (FireBall, position, Quaternion.identity), 0.75f);
-			Destroy(Instantiate (FireBall, new Vector3 (position.x + 1, position.y + 1, position.z), Quaternion.identity), 0.75f);
-			Destroy(Instantiate (FireBall, new Vector3 (position.x + 1, position.y - 1, position.z), Quaternion.identity), 0.75f);
-			Destroy(Instantiate (FireBall, new Vector3 (position.x - 1, position.y + 1, position.z), Quaternion.identity), 0.75f);
-			Destroy(Instantiate (FireBall, new Vector3 (position.x - 1, position.y - 1, position.z), Quaternion.identity), 0.75f);
+				//call the animation trigger function and pass in playerAttack
+				triggerAnimation ("playerAttack");
 
-			//acknowledge the fact that the player cast a spell this turn
-			playerSlow = true;
+				//spawn a fireball at position, as well as four other adjacent positions, and set them to destroy after a delay
+				Destroy (Instantiate (FireBall, position, Quaternion.identity), 0.75f);
+				Destroy (Instantiate (FireBall, new Vector3 (position.x + 1, position.y + 1, position.z), Quaternion.identity), 0.75f);
+				Destroy (Instantiate (FireBall, new Vector3 (position.x + 1, position.y - 1, position.z), Quaternion.identity), 0.75f);
+				Destroy (Instantiate (FireBall, new Vector3 (position.x - 1, position.y + 1, position.z), Quaternion.identity), 0.75f);
+				Destroy (Instantiate (FireBall, new Vector3 (position.x - 1, position.y - 1, position.z), Quaternion.identity), 0.75f);
 
-			//call the end turn function to end the player's turn after a delay
-			StartCoroutine ("endTurn", 0.75f);
-		}
+				//acknowledge the fact that the player took an extra action this turn
+				playerSlow = true;
 
-		//if the player has the iceOrb equipped
-		if (currentWeap == 10) {
+				//acknowledge that the player has successfully double clicked already this turn
+				playerClick = true;
+
+				//call the end turn function to end the player's turn after a delay
+				StartCoroutine ("endTurn", 0.75f);
+			}
+
+			//if the player has the iceOrb equipped
+			if (currentWeap == 10) {
 			
-			//play the randomized explosion sound effect
-			SoundManager.instance.RandomizeSfx (explosion);
+				//play the randomized explosion sound effect
+				SoundManager.instance.RandomizeSfx (explosion);
 			
-			//start the iceOrb attack animation
-			iceOrbAnimator.SetTrigger ("playerAttack");
+				//start the iceOrb attack animation
+				iceOrbAnimator.SetTrigger ("playerAttack");
 
-			//call the trigger animation function and pass in playerAttack
-			triggerAnimation ("playerAttack");
+				//call the trigger animation function and pass in playerAttack
+				triggerAnimation ("playerAttack");
 			
-			//spawn IceShards at position, as well as four other adjacent positions, and set them to destroy after a delay
-			Destroy(Instantiate (IceShards, position, Quaternion.identity), 0.75f);
-			Destroy(Instantiate (IceShards, new Vector3 (position.x + 1, position.y, position.z), Quaternion.identity), 0.75f);
-			Destroy(Instantiate (IceShards, new Vector3 (position.x, position.y + 1, position.z), Quaternion.identity), 0.75f);
-			Destroy(Instantiate (IceShards, new Vector3 (position.x - 1, position.y, position.z), Quaternion.identity), 0.75f);
-			Destroy(Instantiate (IceShards, new Vector3 (position.x, position.y - 1, position.z), Quaternion.identity), 0.75f);
+				//spawn IceShards at position, as well as four other adjacent positions, and set them to destroy after a delay
+				Destroy (Instantiate (IceShards, position, Quaternion.identity), 0.75f);
+				Destroy (Instantiate (IceShards, new Vector3 (position.x + 1, position.y, position.z), Quaternion.identity), 0.75f);
+				Destroy (Instantiate (IceShards, new Vector3 (position.x, position.y + 1, position.z), Quaternion.identity), 0.75f);
+				Destroy (Instantiate (IceShards, new Vector3 (position.x - 1, position.y, position.z), Quaternion.identity), 0.75f);
+				Destroy (Instantiate (IceShards, new Vector3 (position.x, position.y - 1, position.z), Quaternion.identity), 0.75f);
 			
-			//call the end turn function to end the player's turn after a delay
-			StartCoroutine ("endTurn", 0.75f);
-		}
+				//acknowledge that the player has successfully double clicked already this turn
+				playerClick = true;
 
-		//if the player has the robes equipped
-		if (currentArmor == 9) {
+				//call the end turn function to end the player's turn after a delay
+				StartCoroutine ("endTurn", 0.75f);
+			}
 
-			//play the teleport effect (currently the explosion effect)
-			SoundManager.instance.RandomizeSfx (explosion);
+			//if the player has the robes equipped
+			if (currentArmor == 9) {
 
-			//call the overloaded trigger animation function with player attack and player hit
-			triggerAnimation ("playerAttack", "playerHit");
+				//play the teleport effect (currently the explosion effect)
+				SoundManager.instance.RandomizeSfx (explosion);
 
-			//spawn a teleport at the double click position and also at the players current position, and set them to destroy after a delay
-			Destroy (Instantiate (Teleport, position, Quaternion.identity), 0.75f);
-			Destroy (Instantiate (Teleport, transform.position, Quaternion.identity), 0.75f);
+				//call the overloaded trigger animation function with player attack and player hit
+				triggerAnimation ("playerAttack", "playerHit");
 
-			//move the player to the double click position
-			transform.position = position;
+				//spawn a teleport at the double click position and also at the players current position, and set them to destroy after a delay
+				Destroy (Instantiate (Teleport, position, Quaternion.identity), 0.75f);
+				Destroy (Instantiate (Teleport, transform.position, Quaternion.identity), 0.75f);
 
-			//acknowledge the fact that the player cast a spell this turn
-			playerSlow = true;
+				//move the player to the double click position
+				transform.position = position;
 
-			//call the end turn function to end the player's turn after a delay
-			StartCoroutine ("endTurn", 0.75f);
+				//acknowledge the fact that the player took an extra action this turn
+				playerSlow = true;
+
+				//acknowledge that the player has successfully double clicked already this turn
+				playerClick = true;
+
+				//call the end turn function to end the player's turn after a delay
+				StartCoroutine ("endTurn", 0.75f);
+			}
 		}
 	}
 
@@ -2457,6 +2493,9 @@ public class Player : MovingObject {
 
 		//tell the game manager that the player's turn is over
 		GameManager.instance.playersTurn = false;
+
+		//reset the player click bool
+		playerClick = false;
 	}
 
 	//function that allows other scripts to access the playerSlow bool
