@@ -53,6 +53,7 @@ public class Player : MovingObject {
 
 	//store the count for the player's inventory items to update to the UI
 	public Text drinkCount;
+	public Text HUDrinkCount;
 	public Text strPotCount;
 	public Text expPotCount;
 	public Text healthPCount;
@@ -310,6 +311,7 @@ public class Player : MovingObject {
  
 		//update the player's inventory items in the UI
 		drinkCount.text = "x" + inventory [0];
+		HUDrinkCount.text = "x" + inventory [0];
 		strPotCount.text = "x" + inventory [2];
 		expPotCount.text = "x" + inventory [4];
 		healthPCount.text = "x" + inventory [5];
@@ -705,6 +707,8 @@ public class Player : MovingObject {
 			//update the Drink count in the UI
 			drinkCount.text = "x" + inventory [0];
 
+			HUDrinkCount.text = "x" + inventory [0];
+
 			//set the color of the status text UI element
 			statusText.color = new Color (0.75f, 0.75f, 0.75f);
 
@@ -809,6 +813,7 @@ public class Player : MovingObject {
 
 					//update the Drink count in the UI
 					drinkCount.text = "x" + inventory [0];
+					HUDrinkCount.text = "x" + inventory [0];
 
 					//set the color of the status text UI element
 					statusText.color = new Color (0.75f, 0.75f, 0.75f);
@@ -884,6 +889,7 @@ public class Player : MovingObject {
 				
 				//update the Drink count in the UI
 				drinkCount.text = "x" + inventory [0];
+				HUDrinkCount.text = "x" + inventory [0];
 				
 				//set the color of the status text UI element
 				statusText.color = new Color (0.75f, 0.75f, 0.75f);
@@ -1258,6 +1264,7 @@ public class Player : MovingObject {
 	//function that causes the player to gain health
 	public void GainHealth (int gain) {
 
+
 		//if the health gain would go over the player's max
 		if (health + gain > maxHp) {
 
@@ -1328,8 +1335,13 @@ public class Player : MovingObject {
 					inventory [0]--;
 
 					//update the Drink count in the UI
-					drinkCount.text = "x" + inventory[0];
+					drinkCount.text = "x" + inventory [0];
+					HUDrinkCount.text = "x" + inventory [0];
 
+				} else {
+
+					//alert the player via the status bar that they are already at full health
+					statusUpdate("Already at full health!", new Color (0.0f, 1.0f, 0.0f));
 				}
 				break;
 

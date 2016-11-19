@@ -19,6 +19,7 @@ public class TutorialButtons : MonoBehaviour {
 	public GameObject Panel4;
 	public GameObject Panel5;
 	public GameObject Panel6;
+	public GameObject Panel7;
 
 	//function that activates or deactivates the tutorial panels
 	public void activatePanels(int activate) {
@@ -132,6 +133,23 @@ public class TutorialButtons : MonoBehaviour {
 					Panel6.SetActive (true);
 				}
 				break;
+
+			//sixth case is for panel number 7
+			case 6:
+
+			//if panel 6 is active
+			if (Panel7.activeInHierarchy) {
+
+				//deactivate it
+				Panel7.SetActive (false);
+
+				//otherwise
+			} else {
+
+				//activate panel 6
+				Panel7.SetActive (true);
+			}
+			break;
 		}
 
 	}
