@@ -9,6 +9,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour {
 	
@@ -102,6 +103,75 @@ public class SoundManager : MonoBehaviour {
 
 	void Update() {
 
+		//adding music loop
+		if (musicSource.time >= musicSource.clip.length - 0.5f) {
 
+			CycleMusic ();
+		}
+	}
+
+	public void CycleMusic() {
+
+		//if the music track is currently playing Gavotte
+		if (SoundManager.instance.musicSource.clip == SoundManager.instance.Gavotte) {
+
+			//switch to the Metal tack
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Metal;
+
+			//start the song
+			SoundManager.instance.musicSource.Play ();
+
+			//if the music track is currently playing Metal
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Metal) {
+
+			//switch to the Apocaclypse track
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Apoc;
+
+			//start the song
+			SoundManager.instance.musicSource.Play ();
+
+			//if the music track is currently playing Apoc
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Apoc) {
+
+			//switch to the Warlock track
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Warlock;
+
+			//start the song
+			SoundManager.instance.musicSource.Play ();
+
+			//if the music track is currently playing Warlock
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Warlock) {
+
+			//switch to the Morbid track
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Morbid;
+
+			//start the song
+			SoundManager.instance.musicSource.Play ();
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Morbid) {
+
+			//switch to the Pyramid track
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Pyramid;
+
+			//start the song
+			SoundManager.instance.musicSource.Play ();
+
+		} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Pyramid) {
+
+			//switch to the Intense track
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Intense;
+
+			//start the song
+			SoundManager.instance.musicSource.Play ();
+
+		} else {
+
+			//switch the track back to Gavotte
+			SoundManager.instance.musicSource.clip = SoundManager.instance.Gavotte;
+
+			//start the song
+			SoundManager.instance.musicSource.Play ();
+
+		}
 	}
 }
