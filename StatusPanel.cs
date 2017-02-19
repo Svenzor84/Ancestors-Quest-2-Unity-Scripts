@@ -47,11 +47,15 @@ public class StatusPanel : MonoBehaviour {
 			//deactivate the help panel as well
 			helpPanel.SetActive (false);
 
+			GameManager.instance.menu_open = false;
+
 			//otherwise
 		} else {
 
 			//activate it
 			statusPanel.SetActive (true);
+
+			GameManager.instance.menu_open = true;
 		}
 
 	}

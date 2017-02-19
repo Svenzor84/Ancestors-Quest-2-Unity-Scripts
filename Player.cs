@@ -53,7 +53,6 @@ public class Player : MovingObject {
 
 	//store the count for the player's inventory items to update to the UI
 	public Text drinkCount;
-	public Text HUDrinkCount;
 	public Text strPotCount;
 	public Text expPotCount;
 	public Text healthPCount;
@@ -311,7 +310,6 @@ public class Player : MovingObject {
  
 		//update the player's inventory items in the UI
 		drinkCount.text = "x" + inventory [0];
-		HUDrinkCount.text = "x" + inventory [0];
 		strPotCount.text = "x" + inventory [2];
 		expPotCount.text = "x" + inventory [4];
 		healthPCount.text = "x" + inventory [5];
@@ -486,7 +484,7 @@ public class Player : MovingObject {
 #endif
 
 		//if the user is has attempted to move the player
-		if (horizontal != 0 || vertical != 0) {
+		if ((horizontal != 0 || vertical != 0) && !GameManager.instance.menu_open) {
 
 			//reset the text on the status text UI text element
 			statusText.text = "";
@@ -707,8 +705,6 @@ public class Player : MovingObject {
 			//update the Drink count in the UI
 			drinkCount.text = "x" + inventory [0];
 
-			HUDrinkCount.text = "x" + inventory [0];
-
 			//set the color of the status text UI element
 			statusText.color = new Color (0.75f, 0.75f, 0.75f);
 
@@ -813,7 +809,6 @@ public class Player : MovingObject {
 
 					//update the Drink count in the UI
 					drinkCount.text = "x" + inventory [0];
-					HUDrinkCount.text = "x" + inventory [0];
 
 					//set the color of the status text UI element
 					statusText.color = new Color (0.75f, 0.75f, 0.75f);
@@ -889,7 +884,6 @@ public class Player : MovingObject {
 				
 				//update the Drink count in the UI
 				drinkCount.text = "x" + inventory [0];
-				HUDrinkCount.text = "x" + inventory [0];
 				
 				//set the color of the status text UI element
 				statusText.color = new Color (0.75f, 0.75f, 0.75f);
@@ -1336,7 +1330,6 @@ public class Player : MovingObject {
 
 					//update the Drink count in the UI
 					drinkCount.text = "x" + inventory [0];
-					HUDrinkCount.text = "x" + inventory [0];
 
 				} else {
 

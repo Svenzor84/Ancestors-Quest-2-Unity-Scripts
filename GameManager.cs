@@ -63,6 +63,14 @@ public class GameManager : MonoBehaviour {
 	public bool weaponDrop = true;
 	public bool armorDrop = false;
 
+	public bool menu_open = true;
+
+	public Texture potion_image;
+	public Texture str_potion_image;
+	public Texture exp_potion_image;
+
+	public GUISkin hotbar;
+
 	//UI REFERENCES
 	//text to display for the current room in the UI
 	private Text roomText;
@@ -129,7 +137,6 @@ public class GameManager : MonoBehaviour {
 	private int seconds = 0;
 	private int finalMins;
 	private int finalSecs;
-
 
 	//awake function will start with a singleton pattern
 	void Awake () {
@@ -395,6 +402,7 @@ public class GameManager : MonoBehaviour {
 		//tell the game manager that we are no longer doing setup (allowing the player to move)
 		doingSetup = false;
 
+		menu_open = false;
 	}
 
 	//function for ending the game
@@ -551,6 +559,42 @@ public class GameManager : MonoBehaviour {
 
 		//if enemies are not moving, we are not doing setup, and it is not the player's turn then start the enemies moving coroutine
 		StartCoroutine (MoveEnemies ());
+	}
+
+	void OnGUI () {
+
+		GUI.skin = hotbar;
+		GUI.color = Color.white;
+
+		if (roomImage != null && !roomImage.activeInHierarchy && !menu_open) {
+
+			GUI.Box (new Rect (Screen.width - Screen.width, Screen.height / 2 - Screen.height / 11, Screen.width / 24, Screen.height / 12), "1");
+
+			GUI.DrawTexture (new Rect (Screen.width - Screen.width, Screen.height / 2 - Screen.height / 11, Screen.width / 24, Screen.height / 12), potion_image);
+
+			if (GUI.Button(new Rect(Screen.width - Screen.width, Screen.height / 2 - Screen.height / 11, Screen.width / 24, Screen.height / 12), "" + getPlayerInv()[0], new GUIStyle("label"))) {
+
+				GameObject.Find ("Player").GetComponent<Player> ().usePlayerItem (0);
+			}
+
+			GUI.Box (new Rect (Screen.width - Screen.width, Screen.height / 2, Screen.width / 24, Screen.height / 12), "2");
+
+			GUI.DrawTexture (new Rect (Screen.width - Screen.width, Screen.height / 2, Screen.width / 24, Screen.height / 12), str_potion_image);
+
+			if (GUI.Button(new Rect(Screen.width - Screen.width, Screen.height / 2, Screen.width / 24, Screen.height / 12), "" + getPlayerInv()[2], new GUIStyle("label"))) {
+
+				GameObject.Find ("Player").GetComponent<Player> ().usePlayerItem (2);
+			}
+
+			GUI.Box (new Rect (Screen.width - Screen.width, Screen.height / 2 + Screen.height / 11, Screen.width / 24, Screen.height / 12), "3");
+
+			GUI.DrawTexture (new Rect (Screen.width - Screen.width, Screen.height / 2 + Screen.height / 11, Screen.width / 24, Screen.height / 12), exp_potion_image);
+
+			if (GUI.Button(new Rect(Screen.width - Screen.width, Screen.height / 2 + Screen.height / 11, Screen.width / 24, Screen.height / 12), "" + getPlayerInv()[4], new GUIStyle("label"))) {
+
+				GameObject.Find ("Player").GetComponent<Player> ().usePlayerItem (4);
+			}
+		}
 	}
 
 	//function that adds enemies to the enemy list

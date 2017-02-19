@@ -49,9 +49,13 @@ public class OptionsPanel : MonoBehaviour {
 			//deactivate it
 			optionsPanel.SetActive (false);
 
+			GameManager.instance.menu_open = false;
+
 			//otherwise
 		} else {
-			
+
+			GameManager.instance.menu_open = true;
+
 			//activate it
 			optionsPanel.SetActive (true);
 
@@ -160,7 +164,7 @@ public class OptionsPanel : MonoBehaviour {
 			//set the text for the song title
 			if (SoundManager.instance.musicSource.clip == SoundManager.instance.Warlock) {
 				
-				//set the song tesxt to warlock
+				//set the song text to warlock
 				songText.text = "Warlock";
 				
 			} else if (SoundManager.instance.musicSource.clip == SoundManager.instance.Morbid) {
